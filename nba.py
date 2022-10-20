@@ -32,6 +32,9 @@ leftovers = Person(name="Leftovers")
 person_list = [shreya, shree, anuraag, brad, gary, joel, ishan, leftovers]
 
 GAMES_IN_SEASON = 82
+
+# Vegas Line is from 10-18-2022
+# Five-thirty-eight line last updated 10-20-2022
 VEGAS_OVER_UNDER_DICT = {
     'ATL': {
         'vegas_line': 45.5,
