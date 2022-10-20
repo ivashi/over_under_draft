@@ -35,6 +35,10 @@ GAMES_IN_SEASON = 82
 
 # Vegas Line is from 10-18-2022
 # Five-thirty-eight line last updated 10-20-2022
+
+# TODO: GET 538 Projections directly from downloadable CSV on 538 site:
+# https://projects.fivethirtyeight.com/nba-model/nba_elo_latest.csv
+
 VEGAS_OVER_UNDER_DICT = {
     'ATL': {
         'vegas_line': 45.5,
