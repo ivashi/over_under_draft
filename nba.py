@@ -1,6 +1,6 @@
 from datetime import date
 from nba_api.stats.static import teams
-from nba_api.stats.endpoints import TeamDashboardByTeamPerformance
+
 
 class Person:
     def __init__(self, name):
@@ -17,256 +17,285 @@ class Person:
     def get_name(self):
         return self.name
 
+
 def person_sort(person_list):
     return sorted(person_list, key=lambda x: x.score, reverse=True)
 
+
 shreya = Person(name="Shreya")
-shree = Person(name="Shree")
-anuraag = Person(name="Anuraag")
-brad = Person(name="Brad")
-gary = Person(name="Gary")
 joel = Person(name="Joel")
 ishan = Person(name="Ishan")
+kevin = Person(name="Kevin")
+malcolm = Person(name="Malcolm")
+evan = Person(name="Evan")
+sam = Person(name="Sam")
+fardhi = Person(name="Fardhi")
 leftovers = Person(name="Leftovers")
 
-person_list = [shreya, shree, anuraag, brad, gary, joel, ishan, leftovers]
-
+person_list = [
+    shreya,
+    joel,
+    ishan,
+    kevin,
+    malcolm,
+    evan,
+    sam,
+    fardhi,
+    leftovers,
+]
 GAMES_IN_SEASON = 82
-
-# Vegas Line is from 10-18-2022
-# Five-thirty-eight line last updated 10-20-2022
-
-# TODO: GET 538 Projections directly from downloadable CSV on 538 site:
-# https://projects.fivethirtyeight.com/nba-model/nba_elo_latest.csv
-
 VEGAS_OVER_UNDER_DICT = {
     'ATL': {
-        'vegas_line': 45.5,
-        'five-thirty-eight': 51,
-        'over': anuraag,
-        'under': shreya,
+        'wins': 25,
+        'losses': 28,
+        'vegas_line': 36.5,
+        'over': shreya,
+        'under': leftovers,
     },
     'BOS': {
-        'vegas_line': 53.5,
-        'five-thirty-eight': 57,
-        'over': anuraag,
-        'under': joel,
+        'wins': 37,
+        'losses': 16,
+        'vegas_line': 58.5,
+        'over': kevin,
+        'under': malcolm,
     },
     'CLE': {
-        'vegas_line': 47.5,
-        'five-thirty-eight': 44,
-        'over': brad,
-        'under': gary,
+        'wins': 42,
+        'losses': 10,
+        'vegas_line': 48.5,
+        'over': shreya,
+        'under': fardhi,
     },
     'NOP': {
-        'vegas_line': 44.5,
-        'five-thirty-eight': 44,
-        'over': ishan,
-        'under': gary,
+        'wins': 12,
+        'losses': 40,
+        'vegas_line': 45.5,
+        'over': sam,
+        'under': leftovers,
     },
     'CHI': {
-        'vegas_line': 41.5,
-        'five-thirty-eight': 37,
-        'over': joel,
-        'under': shree,
+        'wins': 22,
+        'losses': 31,
+        'vegas_line': 28.5,
+        'over': sam,
+        'under': fardhi,
     },
     'DAL': {
-        'vegas_line': 48.5,
-        'five-thirty-eight': 50,
-        'over': anuraag,
-        'under': shree,
+        'wins': 28,
+        'losses': 25,
+        'vegas_line': 49.5,
+        'over': malcolm,
+        'under': kevin,
     },
     'DEN': {
+        'wins': 34,
+        'losses': 19,
         'vegas_line': 50.5,
-        'five-thirty-eight': 53,
-        'over': shreya,
-        'under': brad,
+        'over': joel,
+        'under': malcolm,
     },
     'GSW': {
-        'vegas_line': 51.5,
-        'five-thirty-eight': 49,
-        'over': shreya,
-        'under': brad,
+        'wins': 26,
+        'losses': 26,
+        'vegas_line': 43.5,
+        'over': joel,
+        'under': evan,
     },
     'HOU': {
-        'vegas_line': 23.5,
-        'five-thirty-eight': 18,
-        'over': anuraag,
+        'wins': 33,
+        'losses': 20,
+        'vegas_line': 42.5,
+        'over': evan,
         'under': leftovers,
     },
     'LAC': {
-        'vegas_line': 52.5,
-        'five-thirty-eight': 47,
-        'over': ishan,
-        'under': shree,
+        'wins': 29,
+        'losses': 23,
+        'vegas_line': 35.5,
+        'over': fardhi,
+        'under': joel,
     },
     'LAL': {
-        'vegas_line': 45.5,
-        'five-thirty-eight': 32,
-        'over': anuraag,
-        'under': gary,
+        'wins': 31,
+        'losses': 19,
+        'vegas_line': 43.5,
+        'over': ishan,
+        'under': fardhi,
     },
     'MIA': {
-        'vegas_line': 48.5,
-        'five-thirty-eight': 49,
+        'wins': 25,
+        'losses': 25,
+        'vegas_line': 43.5,
         'over': shreya,
-        'under': brad,
+        'under': ishan,
     },
     'MIL': {
-        'vegas_line': 52.5,
-        'five-thirty-eight': 49,
-        'over': brad,
-        'under': leftovers,
+        'wins': 28,
+        'losses': 23,
+        'vegas_line': 49.5,
+        'over': malcolm,
+        'under': joel,
     },
     'MIN': {
-        'vegas_line': 49.5,
-        'five-thirty-eight': 48,
-        'over': shreya,
-        'under': shree,
+        'wins': 30,
+        'losses': 23,
+        'vegas_line': 51.5,
+        'over': kevin,
+        'under': malcolm,
     },
     'BKN': {
-        'vegas_line': 50.5,
-        'five-thirty-eight': 44,
-        'over': anuraag,
-        'under': gary,
+        'wins': 18,
+        'losses': 34,
+        'vegas_line': 19.5,
+        'over': leftovers,
+        'under': kevin,
     },
     'NYK': {
-        'vegas_line': 38.5,
-        'five-thirty-eight': 40,
-        'over': shreya,
-        'under': anuraag,
+        'wins': 34,
+        'losses': 18,
+        'vegas_line': 53.5,
+        'over': kevin,
+        'under': shreya,
     },
     'ORL': {
-        'vegas_line': 26.5,
-        'five-thirty-eight': 23,
-        'over': ishan,
-        'under': shree,
+        'wins': 26,
+        'losses': 28,
+        'vegas_line': 47.5,
+        'over': evan,
+        'under': fardhi,
     },
     'IND': {
-        'vegas_line': 23.5,
-        'five-thirty-eight': 34,
-        'over': gary,
+        'wins': 29,
+        'losses': 22,
+        'vegas_line': 46.5,
+        'over': sam,
         'under': ishan,
     },
     'PHI': {
-        'vegas_line': 50.5,
-        'five-thirty-eight': 50,
-        'over': joel,
-        'under': gary,
+        'wins': 20,
+        'losses': 32,
+        'vegas_line': 49.5,
+        'over': shreya,
+        'under': malcolm,
     },
     'PHX': {
-        'vegas_line': 52.5,
-        'five-thirty-eight': 50,
-        'over': shree,
+        'wins': 26,
+        'losses': 26,
+        'vegas_line': 48.5,
+        'over': evan,
         'under': ishan,
     },
     'POR': {
-        'vegas_line': 39.5,
-        'five-thirty-eight': 38,
-        'over': brad,
-        'under': shreya,
+        'wins': 23,
+        'losses': 30,
+        'vegas_line': 20.5,
+        'over': joel,
+        'under': kevin,
     },
     'SAC': {
-        'vegas_line': 33.5,
-        'five-thirty-eight': 32,
-        'over': shreya,
-        'under': joel,
+        'wins': 26,
+        'losses': 26,
+        'vegas_line': 46.5,
+        'over': joel,
+        'under': malcolm,
     },
     'SAS': {
-        'vegas_line': 22.5,
-        'five-thirty-eight': 29,
-        'over': gary,
-        'under': joel,
+        'wins': 22,
+        'losses': 28,
+        'vegas_line': 35.5,
+        'over': sam,
+        'under': fardhi,
     },
     'OKC': {
-        'vegas_line': 23.5,
-        'five-thirty-eight': 23,
+        'wins': 42,
+        'losses': 9,
+        'vegas_line': 57.5,
         'over': ishan,
-        'under': brad,
-    },
-    'TOR': {
-        'vegas_line': 45.5,
-        'five-thirty-eight': 50,
-        'over': brad,
-        'under': leftovers,
-    },
-    'UTA': {
-        'vegas_line': 24.5,
-        'five-thirty-eight': 40,
-        'over': shree,
-        'under': ishan,
-    },
-    'MEM': {
-        'vegas_line': 48.5,
-        'five-thirty-eight': 53,
-        'over': joel,
-        'under': anuraag,
-    },
-    'WAS': {
-        'vegas_line': 35.5,
-        'five-thirty-eight': 32,
-        'over': leftovers,
         'under': joel,
     },
+    'TOR': {
+        'wins': 16,
+        'losses': 37,
+        'vegas_line': 28.5,
+        'over': kevin,
+        'under': evan,
+    },
+    'UTA': {
+        'wins': 12,
+        'losses': 39,
+        'vegas_line': 27.5,
+        'over': sam,
+        'under': shreya,
+    },
+    'MEM': {
+        'wins': 35,
+        'losses': 17,
+        'vegas_line': 46.5,
+        'over': sam,
+        'under': ishan,
+    },
+    'WAS': {
+        'wins': 9,
+        'losses': 43,
+        'vegas_line': 19.5,
+        'over': fardhi,
+        'under': evan,
+    },
     'DET': {
-        'vegas_line': 29.5,
-        'five-thirty-eight': 24,
-        'over': joel,
-        'under': shree,
+        'wins': 27,
+        'losses': 26,
+        'vegas_line': 26.5,
+        'over': ishan,
+        'under': evan,
     },
     'CHA': {
-        'vegas_line': 33.5,
-        'five-thirty-eight': 42,
-        'over': gary,
-        'under': ishan,
+        'wins': 13,
+        'losses': 37,
+        'vegas_line': 30.5,
+        'over': sam,
+        'under': shreya,
     },
 }
 
 
 nba_teams = teams.get_teams()
 
-for team in nba_teams:
+for team in VEGAS_OVER_UNDER_DICT.keys():
     try:
-        team_dict = TeamDashboardByTeamPerformance(team_id=team['id']).overall_team_dashboard.get_dict()
-        wins = team_dict['data'][0][3]
-        losses = team_dict['data'][0][4]
-        vegas_line = VEGAS_OVER_UNDER_DICT[team['abbreviation']]['vegas_line']
-        expected_wins = VEGAS_OVER_UNDER_DICT[team['abbreviation']]['five-thirty-eight']
-
-        """
-        if losses > 0:
-            expected_wins = round(((wins * 1.0) / losses) * GAMES_IN_SEASON)
-        else:
-            expected_wins = GAMES_IN_SEASON
-        if wins > 0:
-            expected_losses = round(((losses * 1.0) / wins) * GAMES_IN_SEASON)
-        else: 
-            expected_losses = GAMES_IN_SEASON
-        """
+        print(f"Getting data for {team}")
+        vegas_line = VEGAS_OVER_UNDER_DICT[team]['vegas_line']
+        wins = VEGAS_OVER_UNDER_DICT[team]['wins']
+        losses = VEGAS_OVER_UNDER_DICT[team]['losses']
+        expected_wins = round(GAMES_IN_SEASON * (wins / (wins + losses)))
+        print(f"Expected Wins: {expected_wins}")
 
         over_value_prediction = expected_wins - vegas_line
         under_value_prediction = vegas_line - expected_wins
 
-        over_predictor = VEGAS_OVER_UNDER_DICT[team['abbreviation']]['over']
-        under_predictor = VEGAS_OVER_UNDER_DICT[team['abbreviation']]['under']
+        print(f"OVER VALUE PREDICTION {team}: {over_value_prediction}")
+        print(f"UNDER VALUE PREDICTION {team}: {under_value_prediction}")
+        over_predictor = VEGAS_OVER_UNDER_DICT[team]['over']
+        under_predictor = VEGAS_OVER_UNDER_DICT[team]['under']
 
         over_predictor.add_to_score(over_value_prediction)
         under_predictor.add_to_score(under_value_prediction)
 
         # Print out team information
-        print(f"Team: {team['full_name']}")
         print(f"{wins} wins {losses} losses")
-        print(f"Based on 538 projection records, Expected Wins: {expected_wins}")
+        print(f"Expected Wins: {expected_wins}")
         print(f"Vegas Line at: {vegas_line}")
-        print(f"Estimated value of OVER: {over_value_prediction} for {over_predictor.get_name()}")
-        print(f"Estimated value of UNDER: {under_value_prediction} for {under_predictor.get_name()}\n\n")
-        
-    except Exception:
+        print(f"Value of OVER: {over_value_prediction} for "
+              f"{over_predictor.get_name()}")
+        print(f"Value of UNDER: {under_value_prediction} for "
+              f"{under_predictor.get_name()}\n\n")
+
+    except Exception as e:
+        print(e)
         continue
 
 person_list = person_sort(person_list)  
 
-print(f"PROJECTED STANDINGS AS OF {date.today()}")
+print(f"STANDINGS AS OF {date.today()}")
 place = 0
 for person in person_list:
     place += 1
